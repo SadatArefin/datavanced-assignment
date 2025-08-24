@@ -1,0 +1,111 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">local_hospital</mat-icon>
+          Doctors Management
+        </h1>
+        <p class="page-subtitle">Manage all doctors in the system</p>
+      </div>
+      <button
+        mat-fab
+        color="primary"
+        routerLink="/doctors/new"
+        class="add-btn"
+        matTooltip="Add New Doctor"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-card class="content-card">
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="doctors" class="doctors-table">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef class="id-column">
+              <div class="header-cell">
+                <mat-icon>badge</mat-icon>
+                ID
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let doctor" class="id-cell">
+              <span class="id-badge">#{{ doctor.id }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="name-column">
+              <div class="header-cell">
+                <mat-icon>person</mat-icon>
+                Doctor Name
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let doctor" class="name-cell">
+              <div class="doctor-info">
+                <div class="doctor-avatar">
+                  <mat-icon>local_hospital</mat-icon>
+                </div>
+                <div class="doctor-details">
+                  <span class="doctor-name">{{ doctor.name }}</span>
+                  <span class="doctor-title">Medical Doctor</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-column">
+              <div class="header-cell">
+                <mat-icon>settings</mat-icon>
+                Actions
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let doctor" class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  mat-icon-button
+                  [routerLink]="['/doctors/edit', doctor.id]"
+                  class="edit-btn"
+                  matTooltip="Edit Doctor"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteDoctor(doctor.id!)"
+                  class="delete-btn"
+                  matTooltip="Delete Doctor"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            class="table-row"
+          ></tr>
+        </table>
+
+        @if (doctors.length === 0) {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">local_hospital</mat-icon>
+          <h3>No Doctors Found</h3>
+          <p>Start by adding your first doctor to the system</p>
+          <button mat-raised-button color="primary" routerLink="/doctors/new">
+            <mat-icon>add</mat-icon>
+            Add First Doctor
+          </button>
+        </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

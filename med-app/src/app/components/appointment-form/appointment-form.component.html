@@ -1,220 +1,265 @@
-<div class="form-container">
-  <h2>{{ isEdit ? "Edit" : "Create" }} Appointment</h2>
+<div class="appointment-form-container">
+  <mat-card class="form-card">
+    <mat-card-header class="form-header">
+      <mat-card-title class="form-title">
+        <mat-icon class="title-icon">{{ isEdit ? "edit" : "add" }}</mat-icon>
+        {{ isEdit ? "Edit" : "Create" }} Appointment
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{
+          isEdit ? "Update appointment details" : "Schedule a new appointment"
+        }}
+      </mat-card-subtitle>
+    </mat-card-header>
 
-  <form [formGroup]="f" (ngSubmit)="save()">
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Patient</mat-label>
-        <mat-select formControlName="patientId" required>
-          @for (p of patients; track p) {
-            <mat-option [value]="p.id">{{
-              p.name
-            }}</mat-option>
-          }
-        </mat-select>
-        @if (f.get('patientId')?.hasError('required')) {
-          <mat-error
-            >Patient is required</mat-error
-            >
-          }
-        </mat-form-field>
+    <mat-card-content class="form-content">
+      <form [formGroup]="f" (ngSubmit)="save()">
+        <!-- Patient and Doctor Selection -->
+        <div class="section">
+          <h3 class="section-title">Patient & Doctor Information</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Select Patient</mat-label>
+              <mat-select formControlName="patientId" required>
+                <mat-option value="">Choose a patient</mat-option>
+                @for (p of patients; track p.id) {
+                <mat-option [value]="p.id">{{ p.name }}</mat-option>
+                }
+              </mat-select>
+              <mat-icon matSuffix>person</mat-icon>
+              @if (f.get('patientId')?.hasError('required') &&
+              f.get('patientId')?.touched) {
+              <mat-error>Patient is required</mat-error>
+              }
+            </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Doctor</mat-label>
-          <mat-select formControlName="doctorId" required>
-            @for (d of doctors; track d) {
-              <mat-option [value]="d.id">{{
-                d.name
-              }}</mat-option>
-            }
-          </mat-select>
-          @if (f.get('doctorId')?.hasError('required')) {
-            <mat-error
-              >Doctor is required</mat-error
-              >
-            }
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Select Doctor</mat-label>
+              <mat-select formControlName="doctorId" required>
+                <mat-option value="">Choose a doctor</mat-option>
+                @for (d of doctors; track d.id) {
+                <mat-option [value]="d.id">{{ d.name }}</mat-option>
+                }
+              </mat-select>
+              <mat-icon matSuffix>local_hospital</mat-icon>
+              @if (f.get('doctorId')?.hasError('required') &&
+              f.get('doctorId')?.touched) {
+              <mat-error>Doctor is required</mat-error>
+              }
+            </mat-form-field>
+          </div>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Appointment Date</mat-label>
-            <input
-              matInput
-              type="date"
-              formControlName="appointmentDate"
-              required
+        <!-- Appointment Details -->
+        <div class="section">
+          <h3 class="section-title">Appointment Details</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Appointment Date</mat-label>
+              <input
+                matInput
+                type="date"
+                formControlName="appointmentDate"
+                required
               />
-              @if (f.get('appointmentDate')?.hasError('required')) {
-                <mat-error
-                  >Date is required</mat-error
-                  >
+              <mat-icon matSuffix>calendar_today</mat-icon>
+              @if (f.get('appointmentDate')?.hasError('required') &&
+              f.get('appointmentDate')?.touched) {
+              <mat-error>Date is required</mat-error>
               }
             </mat-form-field>
 
             <div class="visit-type-container">
-              <label>Visit Type</label>
-              <mat-button-toggle-group formControlName="visitType" name="visitType">
-                <mat-button-toggle [value]="VisitType.First"
-                  >First Visit</mat-button-toggle
-                  >
-                  <mat-button-toggle [value]="VisitType.FollowUp"
-                    >Follow-up</mat-button-toggle
-                    >
-                  </mat-button-toggle-group>
+              <label class="visit-type-label">Visit Type</label>
+              <mat-button-toggle-group
+                formControlName="visitType"
+                class="visit-type-group"
+              >
+                <mat-button-toggle [value]="VisitType.First">
+                  <mat-icon>new_releases</mat-icon>
+                  First Visit
+                </mat-button-toggle>
+                <mat-button-toggle [value]="VisitType.FollowUp">
+                  <mat-icon>refresh</mat-icon>
+                  Follow-up
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Information -->
+        <div class="section">
+          <h3 class="section-title">Clinical Information</h3>
+          <div class="form-row full-width">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Notes</mat-label>
+              <textarea
+                matInput
+                placeholder="Additional notes about the appointment..."
+                formControlName="notes"
+                rows="3"
+              ></textarea>
+              <mat-icon matSuffix>notes</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row full-width">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Diagnosis</mat-label>
+              <textarea
+                matInput
+                placeholder="Diagnosis details..."
+                formControlName="diagnosis"
+                rows="3"
+              ></textarea>
+              <mat-icon matSuffix>medical_services</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Prescriptions Section -->
+        <div class="section prescriptions-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <mat-icon>medication</mat-icon>
+              Prescriptions
+            </h3>
+            <button
+              mat-fab
+              color="primary"
+              type="button"
+              (click)="addRow()"
+              class="add-prescription-btn"
+              matTooltip="Add Prescription"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          @if (details.length > 0) {
+          <div class="prescriptions-container">
+            @for (control of detailsControls; track $index) {
+            <mat-card class="prescription-card" [formGroup]="control">
+              <mat-card-header class="prescription-header">
+                <mat-card-title class="prescription-title">
+                  Prescription {{ $index + 1 }}
+                </mat-card-title>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  type="button"
+                  (click)="removeRow($index)"
+                  matTooltip="Remove Prescription"
+                  class="remove-btn"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-card-header>
+
+              <mat-card-content class="prescription-content">
+                <div class="prescription-row">
+                  <mat-form-field appearance="outline" class="medicine-field">
+                    <mat-label>Medicine</mat-label>
+                    <mat-select formControlName="medicineId" required>
+                      <mat-option value="">Select medicine</mat-option>
+                      @for (m of medicines; track m.id) {
+                      <mat-option [value]="m.id">{{ m.name }}</mat-option>
+                      }
+                    </mat-select>
+                    <mat-icon matSuffix>medication</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="dosage-field">
+                    <mat-label>Dosage</mat-label>
+                    <input
+                      matInput
+                      placeholder="e.g., 1 tablet twice daily"
+                      formControlName="dosage"
+                      required
+                    />
+                    <mat-icon matSuffix>schedule</mat-icon>
+                  </mat-form-field>
                 </div>
-              </div>
 
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Notes</mat-label>
-                  <textarea
-                    matInput
-                    placeholder="Additional notes"
-                    formControlName="notes"
-                    rows="3"
-                  ></textarea>
-                </mat-form-field>
-              </div>
+                <div class="prescription-row">
+                  <mat-form-field appearance="outline" class="date-field">
+                    <mat-label>Start Date</mat-label>
+                    <input
+                      matInput
+                      type="date"
+                      formControlName="startDate"
+                      required
+                    />
+                    <mat-icon matSuffix>play_arrow</mat-icon>
+                  </mat-form-field>
 
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Diagnosis</mat-label>
-                  <textarea
-                    matInput
-                    placeholder="Diagnosis details"
-                    formControlName="diagnosis"
-                    rows="3"
-                  ></textarea>
-                </mat-form-field>
-              </div>
-
-              <div class="prescriptions-section">
-                <div class="section-header">
-                  <h3>Prescriptions</h3>
-                  <button
-                    mat-stroked-button
-                    type="button"
-                    color="primary"
-                    (click)="addRow()"
-                    >
-                    <mat-icon>add</mat-icon>
-                    Add Prescription
-                  </button>
+                  <mat-form-field appearance="outline" class="date-field">
+                    <mat-label>End Date</mat-label>
+                    <input
+                      matInput
+                      type="date"
+                      formControlName="endDate"
+                      required
+                    />
+                    <mat-icon matSuffix>stop</mat-icon>
+                  </mat-form-field>
                 </div>
 
-                @if (details.length > 0) {
-                  <div class="prescriptions-table">
-                    <table
-                      mat-table
-                      [dataSource]="details.controls"
-                      class="prescriptions-table"
-                      >
-                      <ng-container matColumnDef="medicine">
-                        <th mat-header-cell *matHeaderCellDef>Medicine</th>
-                        <td mat-cell *matCellDef="let control; let i = index">
-                          <div [formGroup]="control">
-                            <mat-form-field appearance="outline">
-                              <mat-select formControlName="medicineId" required>
-                                @for (m of medicines; track m) {
-                                  <mat-option [value]="m.id">{{
-                                    m.name
-                                  }}</mat-option>
-                                }
-                              </mat-select>
-                            </mat-form-field>
-                          </div>
-                        </td>
-                      </ng-container>
-                      <ng-container matColumnDef="dosage">
-                        <th mat-header-cell *matHeaderCellDef>Dosage</th>
-                        <td mat-cell *matCellDef="let control; let i = index">
-                          <div [formGroup]="control">
-                            <mat-form-field appearance="outline">
-                              <input
-                                matInput
-                                placeholder="e.g., 1 tablet twice daily"
-                                formControlName="dosage"
-                                required
-                                />
-                              </mat-form-field>
-                            </div>
-                          </td>
-                        </ng-container>
-                        <ng-container matColumnDef="startDate">
-                          <th mat-header-cell *matHeaderCellDef>Start Date</th>
-                          <td mat-cell *matCellDef="let control; let i = index">
-                            <div [formGroup]="control">
-                              <mat-form-field appearance="outline">
-                                <input
-                                  matInput
-                                  type="date"
-                                  formControlName="startDate"
-                                  required
-                                  />
-                                </mat-form-field>
-                              </div>
-                            </td>
-                          </ng-container>
-                          <ng-container matColumnDef="endDate">
-                            <th mat-header-cell *matHeaderCellDef>End Date</th>
-                            <td mat-cell *matCellDef="let control; let i = index">
-                              <div [formGroup]="control">
-                                <mat-form-field appearance="outline">
-                                  <input
-                                    matInput
-                                    type="date"
-                                    formControlName="endDate"
-                                    required
-                                    />
-                                  </mat-form-field>
-                                </div>
-                              </td>
-                            </ng-container>
-                            <ng-container matColumnDef="notes">
-                              <th mat-header-cell *matHeaderCellDef>Notes</th>
-                              <td mat-cell *matCellDef="let control; let i = index">
-                                <div [formGroup]="control">
-                                  <mat-form-field appearance="outline">
-                                    <input
-                                      matInput
-                                      placeholder="Additional notes"
-                                      formControlName="notes"
-                                      />
-                                    </mat-form-field>
-                                  </div>
-                                </td>
-                              </ng-container>
-                              <ng-container matColumnDef="actions">
-                                <th mat-header-cell *matHeaderCellDef>Actions</th>
-                                <td mat-cell *matCellDef="let control; let i = index">
-                                  <button
-                                    mat-icon-button
-                                    type="button"
-                                    color="warn"
-                                    (click)="removeRow(i)"
-                                    >
-                                    <mat-icon>delete</mat-icon>
-                                  </button>
-                                </td>
-                              </ng-container>
-                              <tr mat-header-row *matHeaderRowDef="prescriptionCols"></tr>
-                              <tr mat-row *matRowDef="let row; columns: prescriptionCols"></tr>
-                            </table>
-                          </div>
-                        }
-                      </div>
+                <div class="prescription-row full-width">
+                  <mat-form-field appearance="outline" class="notes-field">
+                    <mat-label>Prescription Notes</mat-label>
+                    <input
+                      matInput
+                      placeholder="Additional notes for this prescription..."
+                      formControlName="notes"
+                    />
+                    <mat-icon matSuffix>note</mat-icon>
+                  </mat-form-field>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            }
+          </div>
+          } @else {
+          <div class="no-prescriptions">
+            <mat-icon class="no-prescriptions-icon">medication</mat-icon>
+            <p>No prescriptions added yet</p>
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="addRow()"
+            >
+              Add First Prescription
+            </button>
+          </div>
+          }
+        </div>
 
-                      <div class="form-actions">
-                        <button
-                          mat-raised-button
-                          color="primary"
-                          type="submit"
-                          [disabled]="!f.valid"
-                          >
-                          {{ isEdit ? "Update" : "Create" }} Appointment
-                        </button>
-                        <button mat-button type="button" (click)="cancel()">Cancel</button>
-                      </div>
-                    </form>
-                  </div>
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button
+            mat-button
+            type="button"
+            (click)="cancel()"
+            class="cancel-btn"
+          >
+            <mat-icon>cancel</mat-icon>
+            Cancel
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="!f.valid"
+            class="submit-btn"
+          >
+            <mat-icon>{{ isEdit ? "update" : "save" }}</mat-icon>
+            {{ isEdit ? "Update" : "Create" }} Appointment
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

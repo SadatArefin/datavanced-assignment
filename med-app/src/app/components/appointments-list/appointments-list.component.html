@@ -1,62 +1,261 @@
-<div class="toolbar">
-  <mat-form-field>
-    <mat-label>Search patient/doctor</mat-label>
-    <input
-      matInput
-      placeholder="Search patient/doctor"
-      [(ngModel)]="search"
-      (keyup.enter)="load()"
-    />
-  </mat-form-field>
-  <button mat-raised-button color="primary" (click)="add()">
-    Add Appointment
-  </button>
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">calendar_today</mat-icon>
+          Appointments Management
+        </h1>
+        <p class="page-subtitle">Manage all appointments in the system</p>
+      </div>
+      <button
+        mat-fab
+        color="primary"
+        (click)="add()"
+        class="add-btn"
+        matTooltip="Add New Appointment"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-section">
+        <h3 class="filters-title">
+          <mat-icon>filter_list</mat-icon>
+          Filters & Search
+        </h3>
+
+        <div class="filters-row">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search</mat-label>
+            <input
+              matInput
+              placeholder="Search by patient or doctor name"
+              [(ngModel)]="search"
+              (keyup.enter)="onSearch()"
+            />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Filter by Doctor</mat-label>
+            <mat-select
+              [(ngModel)]="selectedDoctorId"
+              (selectionChange)="onFilterChange()"
+            >
+              <mat-option [value]="null">All Doctors</mat-option>
+              <mat-option *ngFor="let doctor of doctors" [value]="doctor.id">
+                {{ doctor.name }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>local_hospital</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Filter by Visit Type</mat-label>
+            <mat-select
+              [(ngModel)]="selectedVisitType"
+              (selectionChange)="onFilterChange()"
+            >
+              <mat-option [value]="null">All Visit Types</mat-option>
+              <mat-option
+                *ngFor="let visitType of visitTypes"
+                [value]="visitType.value"
+              >
+                {{ visitType.label }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>category</mat-icon>
+          </mat-form-field>
+
+          <button
+            mat-stroked-button
+            color="accent"
+            (click)="clearFilters()"
+            class="clear-btn"
+          >
+            <mat-icon>clear</mat-icon>
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="content-card">
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="rows" class="appointments-table">
+          <ng-container matColumnDef="patient">
+            <th mat-header-cell *matHeaderCellDef class="patient-column">
+              <div class="header-cell">
+                <mat-icon>person</mat-icon>
+                Patient
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let r" class="patient-cell">
+              <div class="patient-info">
+                <div class="patient-avatar">
+                  <mat-icon>person</mat-icon>
+                </div>
+                <span class="patient-name">{{ r.patient }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="doctor">
+            <th mat-header-cell *matHeaderCellDef class="doctor-column">
+              <div class="header-cell">
+                <mat-icon>local_hospital</mat-icon>
+                Doctor
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let r" class="doctor-cell">
+              <div class="doctor-info">
+                <div class="doctor-avatar">
+                  <mat-icon>local_hospital</mat-icon>
+                </div>
+                <span class="doctor-name">{{ r.doctor }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef class="date-column">
+              <div class="header-cell">
+                <mat-icon>calendar_today</mat-icon>
+                Date
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let r" class="date-cell">
+              <div class="date-info">
+                <span class="date-value">{{
+                  r.date | date : "MMM dd, yyyy"
+                }}</span>
+                <span class="date-weekday">{{ r.date | date : "EEEE" }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="visitType">
+            <th mat-header-cell *matHeaderCellDef class="visit-type-column">
+              <div class="header-cell">
+                <mat-icon>category</mat-icon>
+                Visit Type
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let r" class="visit-type-cell">
+              <span
+                class="visit-type-badge"
+                [class.first-visit]="r.visitType === 0"
+                [class.follow-up]="r.visitType === 1"
+              >
+                {{ getVisitTypeText(r.visitType) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="diagnosis">
+            <th mat-header-cell *matHeaderCellDef class="diagnosis-column">
+              <div class="header-cell">
+                <mat-icon>medical_services</mat-icon>
+                Diagnosis
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let r" class="diagnosis-cell">
+              <span class="diagnosis-text">{{
+                r.diagnosis || "No diagnosis"
+              }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-column">
+              <div class="header-cell">
+                <mat-icon>settings</mat-icon>
+                Actions
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let r" class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  mat-icon-button
+                  (click)="edit(r.id)"
+                  class="edit-btn"
+                  matTooltip="Edit Appointment"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="remove(r.id)"
+                  class="delete-btn"
+                  matTooltip="Delete Appointment"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="accent"
+                  (click)="pdf(r.id)"
+                  class="pdf-btn"
+                  matTooltip="Download PDF"
+                >
+                  <mat-icon>picture_as_pdf</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="email(r.id)"
+                  class="email-btn"
+                  matTooltip="Send Email"
+                >
+                  <mat-icon>email</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="cols"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: cols"
+            class="table-row"
+          ></tr>
+        </table>
+
+        @if (rows.length === 0) {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">calendar_today</mat-icon>
+          <h3>No Appointments Found</h3>
+          <p>Start by adding your first appointment to the system</p>
+          <button mat-raised-button color="primary" (click)="add()">
+            <mat-icon>add</mat-icon>
+            Add First Appointment
+          </button>
+        </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (rows.length > 0) {
+  <mat-card class="pagination-card">
+    <mat-card-content>
+      <mat-paginator
+        [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="onPage($event)"
+        showFirstLastButtons
+        class="custom-paginator"
+      >
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+  }
 </div>
-
-<table mat-table [dataSource]="rows" class="mat-elevation-z8">
-  <ng-container matColumnDef="patient">
-    <th mat-header-cell *matHeaderCellDef>Patient</th>
-    <td mat-cell *matCellDef="let r">{{ r.patient }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="doctor">
-    <th mat-header-cell *matHeaderCellDef>Doctor</th>
-    <td mat-cell *matCellDef="let r">{{ r.doctor }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="date">
-    <th mat-header-cell *matHeaderCellDef>Date</th>
-    <td mat-cell *matCellDef="let r">{{ r.date | date }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="visitType">
-    <th mat-header-cell *matHeaderCellDef>Visit Type</th>
-    <td mat-cell *matCellDef="let r">{{ getVisitTypeText(r.visitType) }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="diagnosis">
-    <th mat-header-cell *matHeaderCellDef>Diagnosis</th>
-    <td mat-cell *matCellDef="let r">{{ r.diagnosis || "-" }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Actions</th>
-    <td mat-cell *matCellDef="let r">
-      <button mat-button (click)="edit(r.id)">Edit</button>
-      <button mat-button color="warn" (click)="remove(r.id)">Delete</button>
-      <button mat-button color="accent" (click)="pdf(r.id)">PDF</button>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="cols"></tr>
-  <tr mat-row *matRowDef="let row; columns: cols"></tr>
-</table>
-
-<mat-paginator
-  [length]="total"
-  [pageSize]="pageSize"
-  [pageSizeOptions]="[5, 10, 25, 100]"
-  (page)="onPage($event)"
-  showFirstLastButtons
->
-</mat-paginator>

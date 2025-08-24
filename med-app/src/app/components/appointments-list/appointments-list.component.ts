@@ -4,10 +4,18 @@ import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { AppointmentService } from '../../services/appointment.service';
 import { DataService } from '../../services/data.service';
 import { AppointmentListDto, VisitType } from '../../models/appointment.models';
+import { EmailDialogComponent } from '../email-dialog/email-dialog.component';
 
 @Component({
     standalone: true,
@@ -20,27 +28,50 @@ import { AppointmentListDto, VisitType } from '../../models/appointment.models';
         MatTableModule,
         MatButtonModule,
         MatInputModule,
-        MatPaginatorModule
+        MatSelectModule,
+        MatFormFieldModule,
+        MatPaginatorModule,
+        MatIconModule,
+        MatCardModule,
+        MatTooltipModule
     ]
 })
 export class AppointmentsListComponent implements OnInit {
-    private api = inject(DataService);
+    private appointmentService = inject(AppointmentService);
+    private dataService = inject(DataService);
     private router = inject(Router);
+    private dialog = inject(MatDialog);
 
     rows: AppointmentListDto[] = [];
     total = 0;
     page = 0;
     pageSize = 10;
     search = '';
+    selectedDoctorId: number | null = null;
+    selectedVisitType: VisitType | null = null;
     cols = ['patient', 'doctor', 'date', 'visitType', 'diagnosis', 'actions'];
 
+    // Lookup data for filters
+    doctors: any[] = [];
+    visitTypes = [
+        { value: VisitType.First, label: 'First Visit' },
+        { value: VisitType.FollowUp, label: 'Follow-up' }
+    ];
+
     ngOnInit() {
+        // Load doctors for filter dropdown
+        this.dataService.doctors().subscribe(doctors => {
+            this.doctors = doctors;
+        });
+
         this.load();
     }
 
     load() {
-        this.api.listAppointments({
+        this.appointmentService.listAppointments({
             search: this.search,
+            doctorId: this.selectedDoctorId || undefined,
+            visitType: this.selectedVisitType || undefined,
             page: this.page + 1,
             pageSize: this.pageSize
         }).subscribe(r => {
@@ -55,6 +86,24 @@ export class AppointmentsListComponent implements OnInit {
         this.load();
     }
 
+    onSearch() {
+        this.page = 0; // Reset to first page when searching
+        this.load();
+    }
+
+    onFilterChange() {
+        this.page = 0; // Reset to first page when filtering
+        this.load();
+    }
+
+    clearFilters() {
+        this.search = '';
+        this.selectedDoctorId = null;
+        this.selectedVisitType = null;
+        this.page = 0;
+        this.load();
+    }
+
     add() {
         this.router.navigate(['/appointments/new']);
     }
@@ -65,18 +114,32 @@ export class AppointmentsListComponent implements OnInit {
 
     remove(id: number) {
         if (confirm('Are you sure you want to delete this appointment?')) {
-            this.api.deleteAppointment(id).subscribe(() => this.load());
+            this.appointmentService.deleteAppointment(id).subscribe(() => this.load());
         }
     }
 
     pdf(id: number) {
-        this.api.downloadPdf(id).subscribe(blob => {
+        this.appointmentService.downloadPdf(id).subscribe(blob => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = 'prescription.pdf';
             a.click();
             URL.revokeObjectURL(url);
+        });
+    }
+
+    email(id: number) {
+        const dialogRef = this.dialog.open(EmailDialogComponent, {
+            width: '400px',
+            data: { appointmentId: id }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                // Email was sent successfully
+                console.log('Email sent successfully');
+            }
         });
     }
 

@@ -1,0 +1,66 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <mat-card-header class="form-header">
+      <mat-card-title class="form-title">
+        <mat-icon class="title-icon">{{ isEdit ? "edit" : "add" }}</mat-icon>
+        {{ isEdit ? "Edit Doctor" : "Add New Doctor" }}
+      </mat-card-title>
+      <mat-card-subtitle class="form-subtitle">
+        {{
+          isEdit
+            ? "Update doctor information"
+            : "Enter doctor details to add to the system"
+        }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="form-content">
+      <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()">
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>local_hospital</mat-icon>
+            Doctor Information
+          </h3>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Full Name</mat-label>
+            <input
+              matInput
+              formControlName="name"
+              required
+              placeholder="Enter doctor's full name"
+            />
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-hint>Enter the complete name of the doctor</mat-hint>
+            @if (doctorForm.get('name')?.hasError('required') &&
+            doctorForm.get('name')?.touched) {
+            <mat-error>Doctor name is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button
+            mat-button
+            type="button"
+            (click)="goBack()"
+            class="cancel-btn"
+          >
+            <mat-icon>cancel</mat-icon>
+            Cancel
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="doctorForm.invalid"
+            class="submit-btn"
+          >
+            <mat-icon>{{ isEdit ? "update" : "save" }}</mat-icon>
+            {{ isEdit ? "Update Doctor" : "Add Doctor" }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

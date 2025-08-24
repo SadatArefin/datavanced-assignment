@@ -1,0 +1,111 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">medication</mat-icon>
+          Medicines Management
+        </h1>
+        <p class="page-subtitle">Manage all medicines in the system</p>
+      </div>
+      <button
+        mat-fab
+        color="primary"
+        routerLink="/medicines/new"
+        class="add-btn"
+        matTooltip="Add New Medicine"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-card class="content-card">
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="medicines" class="medicines-table">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef class="id-column">
+              <div class="header-cell">
+                <mat-icon>badge</mat-icon>
+                ID
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let medicine" class="id-cell">
+              <span class="id-badge">#{{ medicine.id }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="name-column">
+              <div class="header-cell">
+                <mat-icon>medication</mat-icon>
+                Medicine Name
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let medicine" class="name-cell">
+              <div class="medicine-info">
+                <div class="medicine-avatar">
+                  <mat-icon>medication</mat-icon>
+                </div>
+                <div class="medicine-details">
+                  <span class="medicine-name">{{ medicine.name }}</span>
+                  <span class="medicine-title">Medicine</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-column">
+              <div class="header-cell">
+                <mat-icon>settings</mat-icon>
+                Actions
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let medicine" class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  mat-icon-button
+                  [routerLink]="['/medicines/edit', medicine.id]"
+                  class="edit-btn"
+                  matTooltip="Edit Medicine"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteMedicine(medicine.id!)"
+                  class="delete-btn"
+                  matTooltip="Delete Medicine"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            class="table-row"
+          ></tr>
+        </table>
+
+        @if (medicines.length === 0) {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">medication</mat-icon>
+          <h3>No Medicines Found</h3>
+          <p>Start by adding your first medicine to the system</p>
+          <button mat-raised-button color="primary" routerLink="/medicines/new">
+            <mat-icon>add</mat-icon>
+            Add First Medicine
+          </button>
+        </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

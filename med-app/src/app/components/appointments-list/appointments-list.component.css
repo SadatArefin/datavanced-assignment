@@ -1,15 +1,368 @@
-.toolbar {
+/* Page Container */
+.page-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* Header Section */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  flex-wrap: wrap;
   gap: 16px;
 }
 
-table {
-  width: 100%;
+.header-info {
+  flex: 1;
 }
 
-.mat-mdc-form-field {
-  width: 300px;
+.page-title {
+  color: white;
+  margin: 0 0 8px 0;
+  font-size: 2.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-icon {
+  font-size: 2.5rem !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+}
+
+.page-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.add-btn {
+  background: linear-gradient(45deg, #4CAF50, #45a049) !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+/* Filters Card */
+.filters-card {
+  margin-bottom: 24px;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  overflow: hidden;
+}
+
+.filters-section {
+  padding: 8px;
+}
+
+.filters-title {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.3rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filters-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  min-width: 300px;
+  flex: 1;
+}
+
+.filter-field {
+  min-width: 200px;
+}
+
+.clear-btn {
+  height: 56px;
+  border-radius: 8px !important;
+  border: 2px solid #667eea !important;
+  color: #667eea !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+  background: #667eea !important;
+  color: white !important;
+  transform: translateY(-1px);
+}
+
+/* Content Card */
+.content-card {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+/* Table Styling */
+.appointments-table {
+  width: 100%;
+  background: white;
+}
+
+.mat-mdc-header-cell {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white !important;
+  font-weight: 600 !important;
+  border-bottom: none !important;
+  padding: 16px !important;
+}
+
+.header-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.mat-mdc-cell {
+  padding: 16px !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+.table-row:hover {
+  background-color: #f8f9ff !important;
+  transition: background-color 0.2s ease;
+}
+
+/* Cell Content Styling */
+.patient-info, .doctor-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.patient-avatar, .doctor-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.patient-name, .doctor-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date-value {
+  font-weight: 500;
+  color: #333;
+}
+
+.date-weekday {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.visit-type-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+  display: inline-block;
+}
+
+.visit-type-badge.first-visit {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.visit-type-badge.follow-up {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: white;
+}
+
+.diagnosis-text {
+  color: #333;
+  font-style: italic;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.edit-btn {
+  color: #4CAF50 !important;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: rgba(76, 175, 80, 0.1) !important;
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  color: #f44336 !important;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: rgba(244, 67, 54, 0.1) !important;
+  transform: scale(1.1);
+}
+
+.pdf-btn {
+  color: #FF5722 !important;
+  transition: all 0.2s ease;
+}
+
+.pdf-btn:hover {
+  background: rgba(255, 87, 34, 0.1) !important;
+  transform: scale(1.1);
+}
+
+.email-btn {
+  color: #2196F3 !important;
+  transition: all 0.2s ease;
+}
+
+.email-btn:hover {
+  background: rgba(33, 150, 243, 0.1) !important;
+  transform: scale(1.1);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 80px !important;
+  width: 80px !important;
+  height: 80px !important;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  margin: 20px 0 10px 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.empty-state p {
+  margin: 0 0 30px 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.empty-state button {
+  border-radius: 25px !important;
+  padding: 12px 24px;
+  font-weight: 500;
+}
+
+/* Pagination Card */
+.pagination-card {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.custom-paginator {
+  background: transparent;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 16px;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .title-icon {
+    font-size: 2rem !important;
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filters-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .search-field, .filter-field {
+    min-width: 100%;
+  }
+  
+  .action-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .patient-info, .doctor-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  
+  .action-buttons {
+    gap: 4px;
+  }
+  
+  .mat-mdc-cell, .mat-mdc-header-cell {
+    padding: 8px !important;
+  }
 }
