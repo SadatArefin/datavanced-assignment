@@ -59,7 +59,7 @@ src/app/
 
 ## API Integration
 
-The application integrates with a .NET Core Web API backend running on `https://localhost:5001/api`. The API provides endpoints for:
+The application integrates with a .NET Core Web API backend running on `https://localhost:7203/api`. The API provides endpoints for:
 
 - **Appointments**: CRUD operations and PDF generation
 - **Lookups**: Patients, doctors, and medicines data
@@ -85,7 +85,7 @@ GET    /api/lookups/medicines      # Get all medicines
 
 - Node.js (v18 or higher)
 - Angular CLI (`npm install -g @angular/cli`)
-- .NET Core Web API backend running on port 5001
+- .NET Core Web API backend running on port 7203
 
 ### Installation
 
@@ -119,7 +119,7 @@ GET    /api/lookups/medicines      # Get all medicines
 
 ### Backend Setup
 
-Ensure the .NET Core Web API backend is running on `https://localhost:5001`. The frontend expects the following endpoints to be available:
+Ensure the .NET Core Web API backend is running on `https://localhost:7203`. The frontend expects the following endpoints to be available:
 
 - Appointments CRUD operations
 - Patient, Doctor, and Medicine lookup endpoints
