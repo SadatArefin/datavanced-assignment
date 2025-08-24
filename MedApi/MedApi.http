@@ -1,0 +1,105 @@
+@MedApi_HostAddress = https://localhost:7029
+
+### Get all patients
+GET {{MedApi_HostAddress}}/api/patients
+
+### Get all doctors
+GET {{MedApi_HostAddress}}/api/doctors
+
+### Get all medicines
+GET {{MedApi_HostAddress}}/api/medicines
+
+### List appointments with pagination
+GET {{MedApi_HostAddress}}/api/appointments?page=1&pageSize=10
+
+### List appointments with search
+GET {{MedApi_HostAddress}}/api/appointments?search=John&page=1&pageSize=10
+
+### List appointments filtered by doctor
+GET {{MedApi_HostAddress}}/api/appointments?doctorId=1&page=1&pageSize=10
+
+### List appointments filtered by visit type
+GET {{MedApi_HostAddress}}/api/appointments?visitType=1&page=1&pageSize=10
+
+### Get specific appointment
+GET {{MedApi_HostAddress}}/api/appointments/1
+
+### Create new appointment
+POST {{MedApi_HostAddress}}/api/appointments
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "doctorId": 1,
+  "appointmentDate": "2025-08-25",
+  "visitType": 1,
+  "notes": "Initial consultation",
+  "diagnosis": "Common cold",
+  "details": [
+    {
+      "medicineId": 1,
+      "dosage": "500mg twice daily",
+      "startDate": "2025-08-25",
+      "endDate": "2025-08-30",
+      "notes": "Take with food"
+    }
+  ]
+}
+
+### Update appointment
+PUT {{MedApi_HostAddress}}/api/appointments/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "patientId": 1,
+  "doctorId": 1,
+  "appointmentDate": "2025-08-25",
+  "visitType": 1,
+  "notes": "Updated consultation notes",
+  "diagnosis": "Updated diagnosis",
+  "details": [
+    {
+      "medicineId": 1,
+      "dosage": "500mg twice daily",
+      "startDate": "2025-08-25",
+      "endDate": "2025-08-30",
+      "notes": "Take with food"
+    }
+  ]
+}
+
+### Delete appointment
+DELETE {{MedApi_HostAddress}}/api/appointments/1
+
+### Generate PDF prescription
+GET {{MedApi_HostAddress}}/api/appointments/1/pdf
+
+### Create new patient
+POST {{MedApi_HostAddress}}/api/patients
+Content-Type: application/json
+
+{
+  "name": "New Patient Name"
+}
+
+### Create new doctor
+POST {{MedApi_HostAddress}}/api/doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. New Doctor"
+}
+
+### Create new medicine
+POST {{MedApi_HostAddress}}/api/medicines
+Content-Type: application/json
+
+{
+  "name": "New Medicine"
+}i_HostAddress = http://localhost:5244
+
+GET {{MedApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
