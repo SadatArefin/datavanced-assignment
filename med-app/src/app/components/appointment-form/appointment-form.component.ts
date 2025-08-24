@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -15,228 +15,18 @@ import { VisitType, AppointmentUpsertDto } from '../../models/appointment.models
 @Component({
     standalone: true,
     selector: 'app-appointment-form',
-    template: `
-    <div class="form-container">
-      <h2>{{isEdit ? 'Edit' : 'Create'}} Appointment</h2>
-      
-      <form [formGroup]="f" (ngSubmit)="save()">
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Patient</mat-label>
-            <mat-select formControlName="patientId" required>
-              <mat-option *ngFor="let p of patients" [value]="p.id">{{p.name}}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="f.get('patientId')?.hasError('required')">Patient is required</mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Doctor</mat-label>
-            <mat-select formControlName="doctorId" required>
-              <mat-option *ngFor="let d of doctors" [value]="d.id">{{d.name}}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="f.get('doctorId')?.hasError('required')">Doctor is required</mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Appointment Date</mat-label>
-            <input matInput type="date" formControlName="appointmentDate" required>
-            <mat-error *ngIf="f.get('appointmentDate')?.hasError('required')">Date is required</mat-error>
-          </mat-form-field>
-
-          <div class="visit-type-container">
-            <label>Visit Type</label>
-            <mat-button-toggle-group formControlName="visitType" name="visitType">
-              <mat-button-toggle [value]="VisitType.First">First Visit</mat-button-toggle>
-              <mat-button-toggle [value]="VisitType.FollowUp">Follow-up</mat-button-toggle>
-            </mat-button-toggle-group>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Notes</mat-label>
-            <textarea matInput placeholder="Additional notes" formControlName="notes" rows="3"></textarea>
-          </mat-form-field>
-        </div>
-
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Diagnosis</mat-label>
-            <textarea matInput placeholder="Diagnosis details" formControlName="diagnosis" rows="3"></textarea>
-          </mat-form-field>
-        </div>
-
-        <div class="prescriptions-section">
-          <div class="section-header">
-            <h3>Prescriptions</h3>
-            <button mat-stroked-button type="button" color="primary" (click)="addRow()">
-              <mat-icon>add</mat-icon>
-              Add Prescription
-            </button>
-          </div>
-
-          <div class="prescriptions-table" *ngIf="details.length > 0">
-            <table mat-table [dataSource]="details.controls" class="prescriptions-table">
-              <ng-container matColumnDef="medicine">
-                <th mat-header-cell *matHeaderCellDef>Medicine</th>
-                <td mat-cell *matCellDef="let control; let i = index">
-                  <div [formGroup]="control">
-                    <mat-form-field appearance="outline">
-                      <mat-select formControlName="medicineId" required>
-                        <mat-option *ngFor="let m of medicines" [value]="m.id">{{m.name}}</mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="dosage">
-                <th mat-header-cell *matHeaderCellDef>Dosage</th>
-                <td mat-cell *matCellDef="let control; let i = index">
-                  <div [formGroup]="control">
-                    <mat-form-field appearance="outline">
-                      <input matInput placeholder="e.g., 1 tablet twice daily" formControlName="dosage" required>
-                    </mat-form-field>
-                  </div>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="startDate">
-                <th mat-header-cell *matHeaderCellDef>Start Date</th>
-                <td mat-cell *matCellDef="let control; let i = index">
-                  <div [formGroup]="control">
-                    <mat-form-field appearance="outline">
-                      <input matInput type="date" formControlName="startDate" required>
-                    </mat-form-field>
-                  </div>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="endDate">
-                <th mat-header-cell *matHeaderCellDef>End Date</th>
-                <td mat-cell *matCellDef="let control; let i = index">
-                  <div [formGroup]="control">
-                    <mat-form-field appearance="outline">
-                      <input matInput type="date" formControlName="endDate" required>
-                    </mat-form-field>
-                  </div>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="notes">
-                <th mat-header-cell *matHeaderCellDef>Notes</th>
-                <td mat-cell *matCellDef="let control; let i = index">
-                  <div [formGroup]="control">
-                    <mat-form-field appearance="outline">
-                      <input matInput placeholder="Additional notes" formControlName="notes">
-                    </mat-form-field>
-                  </div>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
-                <td mat-cell *matCellDef="let control; let i = index">
-                  <button mat-icon-button type="button" color="warn" (click)="removeRow(i)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="prescriptionCols"></tr>
-              <tr mat-row *matRowDef="let row; columns: prescriptionCols;"></tr>
-            </table>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button mat-raised-button color="primary" type="submit" [disabled]="!f.valid">
-            {{isEdit ? 'Update' : 'Create'}} Appointment
-          </button>
-          <button mat-button type="button" (click)="cancel()">Cancel</button>
-        </div>
-      </form>
-    </div>
-  `,
-    styles: [`
-    .form-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .form-row {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .form-row mat-form-field {
-      flex: 1;
-    }
-
-    .full-width {
-      width: 100%;
-    }
-
-    .visit-type-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .visit-type-container label {
-      font-weight: 500;
-      color: rgba(0, 0, 0, 0.6);
-      font-size: 14px;
-    }
-
-    .prescriptions-section {
-      margin-top: 32px;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .prescriptions-table {
-      width: 100%;
-      margin-bottom: 16px;
-    }
-
-    .prescriptions-table mat-form-field {
-      width: 100%;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 16px;
-      margin-top: 32px;
-      padding-top: 16px;
-      border-top: 1px solid #e0e0e0;
-    }
-
-    h2, h3 {
-      color: #333;
-      margin-bottom: 16px;
-    }
-  `],
+    templateUrl: './appointment-form.component.html',
+    styleUrls: ['./appointment-form.component.css'],
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatTableModule,
-        MatIconModule
-    ]
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatTableModule,
+    MatIconModule
+]
 })
 export class AppointmentFormComponent implements OnInit {
     VisitType = VisitType;
@@ -326,7 +116,7 @@ export class AppointmentFormComponent implements OnInit {
 
             // Add prescription rows
             if (appointment.details && appointment.details.length > 0) {
-                appointment.details.forEach(detail => {
+                appointment.details.forEach((detail: any) => {
                     const prescriptionGroup = this.fb.group({
                         id: [detail.id],
                         medicineId: [detail.medicineId, Validators.required],

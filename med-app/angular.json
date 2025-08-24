@@ -2,10 +2,63 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
+  "cli": {
+    "analytics": false
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "skipTests": true,
+      "style": "css",
+      "standalone": true
+    },
+    "@schematics/angular:service": {
+      "skipTests": true
+    },
+    "@schematics/angular:pipe": {
+      "skipTests": true
+    },
+    "@schematics/angular:directive": {
+      "skipTests": true
+    },
+    "@schematics/angular:guard": {
+      "skipTests": true
+    }
+  },
   "projects": {
     "med-app": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "skipTests": true,
+          "path": "src/app/components"
+        },
+        "@schematics/angular:service": {
+          "skipTests": true,
+          "path": "src/app/services"
+        },
+        "@schematics/angular:interface": {
+          "path": "src/app/models"
+        },
+        "@schematics/angular:class": {
+          "skipTests": true,
+          "path": "src/app/models"
+        },
+        "@schematics/angular:enum": {
+          "path": "src/app/models"
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true,
+          "path": "src/app/guards"
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true,
+          "path": "src/app/pipes"
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true,
+          "path": "src/app/directives"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",

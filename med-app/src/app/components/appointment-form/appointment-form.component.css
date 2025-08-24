@@ -1,0 +1,64 @@
+.form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row mat-form-field {
+  flex: 1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.visit-type-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visit-type-container label {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+
+.prescriptions-section {
+  margin-top: 32px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.prescriptions-table {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.prescriptions-table mat-form-field {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+h2, h3 {
+  color: #333;
+  margin-bottom: 16px;
+}
