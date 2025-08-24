@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using MedApi.Data;
 using MedApi.Converters;
 using MedApi.Extensions;
+using MedApi.Interfaces;
+using MedApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,12 @@ else
     builder.Services.AddDbContext<AppDb>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("db")));
 }
+
+// Register business services
+builder.Services.AddScoped<IPatientsService, PatientsService>();
+builder.Services.AddScoped<IDoctorsService, DoctorsService>();
+builder.Services.AddScoped<IMedicinesService, MedicinesService>();
+builder.Services.AddScoped<IAppointmentsService, AppointmentsService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MedApi.Data;
 using MedApi.Entities;
+using MedApi.Interfaces;
 
 namespace MedApi.Controllers;
 
@@ -9,53 +8,44 @@ namespace MedApi.Controllers;
 [Route("api/[controller]")]
 public class DoctorsController : ControllerBase
 {
-    private readonly AppDb _db;
+    private readonly IDoctorsService _doctorsService;
 
-    public DoctorsController(AppDb db)
+    public DoctorsController(IDoctorsService doctorsService)
     {
-        _db = db;
+        _doctorsService = doctorsService;
     }
 
     [HttpGet]
     public async Task<List<Doctor>> GetAll()
     {
-        return await _db.Doctors.OrderBy(d => d.Name).ToListAsync();
+        return await _doctorsService.GetAllAsync();
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Doctor>> Get(int id)
     {
-        var doctor = await _db.Doctors.FindAsync(id);
+        var doctor = await _doctorsService.GetByIdAsync(id);
         return doctor == null ? NotFound() : doctor;
     }
 
     [HttpPost]
     public async Task<ActionResult<Doctor>> Create(Doctor doctor)
     {
-        _db.Doctors.Add(doctor);
-        await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(Get), new { id = doctor.Id }, doctor);
+        var created = await _doctorsService.CreateAsync(doctor);
+        return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, Doctor doctor)
     {
-        var existing = await _db.Doctors.FindAsync(id);
-        if (existing == null) return NotFound();
-
-        existing.Name = doctor.Name;
-        await _db.SaveChangesAsync();
-        return NoContent();
+        var success = await _doctorsService.UpdateAsync(id, doctor);
+        return success ? NoContent() : NotFound();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var doctor = await _db.Doctors.FindAsync(id);
-        if (doctor == null) return NotFound();
-
-        _db.Doctors.Remove(doctor);
-        await _db.SaveChangesAsync();
-        return NoContent();
+        var success = await _doctorsService.DeleteAsync(id);
+        return success ? NoContent() : NotFound();
     }
 }
