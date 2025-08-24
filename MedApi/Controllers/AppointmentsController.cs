@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using MedApi.Dto;
 using MedApi.Entities;
 using MedApi.Interfaces;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace MedApi.Controllers;
 
@@ -60,5 +62,39 @@ public class AppointmentsController : ControllerBase
     {
         var pdfBytes = await _appointmentsService.GeneratePdfAsync(id);
         return pdfBytes == null ? NotFound() : File(pdfBytes, "application/pdf", "prescription.pdf");
+    }
+
+    [HttpPost("{id:int}/email")]
+    public async Task<IActionResult> Email(int id, [FromQuery] string to)
+    {
+        // Reuse Pdf(id) logic to get bytes
+        var pdfBytes = await _appointmentsService.GeneratePdfAsync(id);
+        if (pdfBytes == null)
+            return NotFound();
+
+        var msg = new MimeMessage();
+        msg.From.Add(MailboxAddress.Parse("noreply@yourdomain.com"));
+        msg.To.Add(MailboxAddress.Parse(to));
+        msg.Subject = "Prescription Report";
+
+        var builder = new BodyBuilder { TextBody = "Attached prescription." };
+        builder.Attachments.Add("prescription.pdf", pdfBytes, new ContentType("application", "pdf"));
+        msg.Body = builder.ToMessageBody();
+
+        using var smtp = new SmtpClient();
+        try
+        {
+            await smtp.ConnectAsync("smtp.server", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync("user", "pass");
+            await smtp.SendAsync(msg);
+            await smtp.DisconnectAsync(true);
+        }
+        catch (Exception ex)
+        {
+            // In a real application, you would want to log this exception
+            return BadRequest($"Failed to send email: {ex.Message}");
+        }
+
+        return Ok();
     }
 }
