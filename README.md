@@ -2,6 +2,7 @@
 
 A comprehensive medical practice management solution with a modern web interface and robust API backend. This system provides complete patient, doctor, appointment, and prescription management capabilities for medical practices.
 
+Video Demo: [Datavanced Medical System Demo](https://youtu.be/iizGiqkTegs)
 ## Features
 
 ### 🏠 Dashboard & Navigation
